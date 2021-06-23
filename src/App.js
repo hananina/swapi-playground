@@ -6,25 +6,22 @@ import "./App.css";
 function App() {
   const [movies, setMovies] = useState([]);
 
-  function fetchMoviesHandler() {
+  //asyncを関数の前につける、この中でawaitが使える
+  async function fetchMoviesHandler() {
     //fetchのデフォルトはGETなのでそのままリクエストを送ろう
-    fetch("https://swapi.dev/api/films/")
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((data) => {
-        const preparedData = data.results.map((movieData) => {
-          return {
-            id: movieData.episode_id,
-            title: movieData.title,
-            release: movieData.release_date,
-            openingText: movieData.opening_crawl,
-          };
-        });
+    const response = await fetch("https://swapi.dev/api/films/");
+    const data = await response.json();
 
-        setMovies(preparedData);
-      });
+    const preparedData = data.results.map((movieData) => {
+      return {
+        id: movieData.episode_id,
+        title: movieData.title,
+        release: movieData.release_date,
+        openingText: movieData.opening_crawl,
+      };
+    });
+
+    setMovies(preparedData);
   }
 
   return (
