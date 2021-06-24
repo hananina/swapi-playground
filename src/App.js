@@ -16,11 +16,10 @@ function App() {
     try {
       //fetchのデフォルトはGETなのでそのままリクエストを送ろう
       const response = await fetch("https://swapi.dev/api/film/");
-      const data = await response.json();
-
       if (!response.ok) {
         throw new Error("エラーが出てるよ"); //エラーを投げたのでtryの下のブロックはスキップして、catchブロックへ飛ぶ。
       }
+      const data = await response.json();
 
       const preparedData = data.results.map((movieData) => {
         return {
@@ -39,15 +38,25 @@ function App() {
     }
   }
 
+  let content = "Found no movies";
+
+  if (isLoading) {
+    content = "Loading";
+  }
+
+  if (error) {
+    content = "Error";
+  }
+
   return (
     <React.Fragment>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
       <section>
-        {isLoading && <span>Loading</span>}
-        {!isLoading && error && <p>Error</p>}
-        {!isLoading && !error && movies.length === 0 && <p>No movies</p>}
+        {isLoading && <span>{content}</span>}
+        {!isLoading && error && <p>{content}</p>}
+        {!isLoading && !error && movies.length === 0 && <p>{content}</p>}
         {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
       </section>
     </React.Fragment>
