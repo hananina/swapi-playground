@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -8,6 +8,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, []);
+
   //asyncを関数の前につける、この中でawaitが使える
   async function fetchMoviesHandler() {
     setIsLoading(true);
@@ -15,7 +19,7 @@ function App() {
 
     try {
       //fetchのデフォルトはGETなのでそのままリクエストを送ろう
-      const response = await fetch("https://swapi.dev/api/film/");
+      const response = await fetch("https://swapi.dev/api/films/");
       if (!response.ok) {
         throw new Error("エラーが出てるよ"); //エラーを投げたのでtryの下のブロックはスキップして、catchブロックへ飛ぶ。
       }
