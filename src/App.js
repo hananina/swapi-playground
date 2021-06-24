@@ -38,14 +38,19 @@ function App() {
     }
   }
 
+  //current state によって違ったcontentの中身を設定する
   let content = "Found no movies";
 
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />;
+  }
+
   if (isLoading) {
-    content = "Loading";
+    content = <p>Loading</p>;
   }
 
   if (error) {
-    content = "Error";
+    content = <p>Error</p>;
   }
 
   return (
@@ -53,12 +58,7 @@ function App() {
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
-      <section>
-        {isLoading && <span>{content}</span>}
-        {!isLoading && error && <p>{content}</p>}
-        {!isLoading && !error && movies.length === 0 && <p>{content}</p>}
-        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
-      </section>
+      <section>{content}</section>
     </React.Fragment>
   );
 }
