@@ -6,26 +6,37 @@ import "./App.css";
 function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   //asyncを関数の前につける、この中でawaitが使える
   async function fetchMoviesHandler() {
     setIsLoading(true);
+    setError(null);
 
-    //fetchのデフォルトはGETなのでそのままリクエストを送ろう
-    const response = await fetch("https://swapi.dev/api/films/");
-    const data = await response.json();
+    try {
+      //fetchのデフォルトはGETなのでそのままリクエストを送ろう
+      const response = await fetch("https://swapi.dev/api/film/");
+      const data = await response.json();
 
-    const preparedData = data.results.map((movieData) => {
-      return {
-        id: movieData.episode_id,
-        title: movieData.title,
-        release: movieData.release_date,
-        openingText: movieData.opening_crawl,
-      };
-    });
+      if (!response.ok) {
+        throw new Error("エラーが出てるよ"); //エラーを投げたのでtryの下のブロックはスキップして、catchブロックへ飛ぶ。
+      }
 
-    setMovies(preparedData);
-    setIsLoading(false);
+      const preparedData = data.results.map((movieData) => {
+        return {
+          id: movieData.episode_id,
+          title: movieData.title,
+          release: movieData.release_date,
+          openingText: movieData.opening_crawl,
+        };
+      });
+
+      setMovies(preparedData);
+      setIsLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -35,7 +46,8 @@ function App() {
       </section>
       <section>
         {isLoading && <span>Loading</span>}
-        {!isLoading && movies.length === 0 && <p>No movies</p>}
+        {!isLoading && error && <p>Error</p>}
+        {!isLoading && !error && movies.length === 0 && <p>No movies</p>}
         {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
       </section>
     </React.Fragment>
